@@ -49,15 +49,23 @@ class TransactionController extends Controller
      */
     public function store(CreateTransactionRequest $request)
     {
-        // return $request->validated();
-        Transaction::create([
-            'amount' => $request->amount,
-            'transaction_types_id' => $request->transaction_type,
-            'khat_type_id' => $request->khat_name,
-        ]);
-        session()->flash('message', 'The specified resource created successfully');
-        return redirect()->route('reports.index');
-
+        $query = Transaction::with('transaction_type', 'khat');
+        $transactions = $query->get();
+        $income = $transactions->where('transaction_types_id', 1)->sum('amount');
+        $expense = $transactions->where('transaction_types_id', 2)->sum('amount');
+        $ballance = $income - $expense;
+        if ($request->transaction_type == 2) {
+            if ($request->amount <= $ballance) {
+                Transaction::create([
+                    'amount' => $request->amount,
+                    'transaction_types_id' => $request->transaction_type,
+                    'khat_type_id' => $request->khat_name,
+                ]);
+                session()->flash('message', 'The specified resource created successfully');
+                return redirect()->route('reports.index');
+            }
+        }
+        return redirect()->back()->withErrors(['message' => "Don't have sufficient ballance"]);
     }
 
     /**
@@ -86,16 +94,26 @@ class TransactionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $transaction)
+    public function update(CreateTransactionRequest $request, $transaction)
     {
+        $query = Transaction::with('transaction_type', 'khat');
+        $transactions = $query->get();
+        $income = $transactions->where('transaction_types_id', 1)->sum('amount');
+        $expense = $transactions->where('transaction_types_id', 2)->sum('amount');
+        $ballance = $income - $expense;
+        if ($request->transaction_type == 2) {
+            if ($request->amount <= $ballance) {
 
-        Transaction::find($transaction)->update([
-            'amount' => $request->amount,
-            'transaction_types_id' => $request->transaction_type,
-            'khat_type_id' => $request->khat_name,
-        ]);
-        session()->flash('message', 'The specified resource updated successfully');
-        return redirect()->route('reports.index');
+                Transaction::find($transaction)->update([
+                    'amount' => $request->amount,
+                    'transaction_types_id' => $request->transaction_type,
+                    'khat_type_id' => $request->khat_name,
+                ]);
+                session()->flash('message', 'The specified resource updated successfully');
+                return redirect()->route('reports.index');
+            }
+        }
+        return redirect()->back()->withErrors(['message' => "Don't have sufficient ballance"]);
     }
 
     /**
