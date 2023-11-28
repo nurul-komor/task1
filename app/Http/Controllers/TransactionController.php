@@ -55,7 +55,7 @@ class TransactionController extends Controller
             'transaction_types_id' => $request->transaction_type,
             'khat_type_id' => $request->khat_name,
         ]);
-
+        session()->flash('message', 'The specified resource created successfully');
         return redirect()->route('reports.index');
 
     }
@@ -71,17 +71,31 @@ class TransactionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Transaction $transaction)
+    public function edit($transaction)
     {
-        //
+        $transaction = Transaction::find($transaction);
+        $khat_types = DB::table('khat_types')->get();
+        $transaction_types = DB::table('transaction_types')->get();
+        return view('update', [
+            'transaction' => $transaction,
+            'khat_types' => $khat_types,
+            'transaction_types' => $transaction_types,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transaction $transaction)
+    public function update(Request $request, $transaction)
     {
-        //
+
+        Transaction::find($transaction)->update([
+            'amount' => $request->amount,
+            'transaction_types_id' => $request->transaction_type,
+            'khat_type_id' => $request->khat_name,
+        ]);
+        session()->flash('message', 'The specified resource updated successfully');
+        return redirect()->route('reports.index');
     }
 
     /**
@@ -89,6 +103,8 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        $transaction->delete();
+        session()->flash('message', 'The specified resource deleted successfully');
+        return redirect()->route('reports.index');
     }
 }

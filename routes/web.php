@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FIlterController;
 use App\Http\Controllers\TransactionController;
 
 /*
@@ -21,3 +22,6 @@ Route::get('/', function () {
 
 
 Route::resource('reports', TransactionController::class);
+
+
+Route::post('/report/filter', [FIlterController::class, 'index'])->name('reports.filter');

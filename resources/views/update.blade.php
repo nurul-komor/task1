@@ -7,16 +7,18 @@
             @endforeach
         @endif
 
-        <form action="{{ route('reports.store') }}" method="post">
+        <form action="{{ route('reports.update', ['report' => $transaction]) }}" method="post">
+            @method('PATCH')
             @csrf
             <div class="mb-5">
                 <label for="transaction_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Transaction
                     Type</label>
                 <select id="transaction_type" name="transaction_type"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected value="">Choose a type</option>
+                    {{-- <option value="">Choose a type</option> --}}
                     @foreach ($transaction_types as $type)
-                        <option value="{{ $type->id }}">{{ $type->transaction_types_name }}</option>
+                        <option value="{{ $type->id }}" @if ($type->id == $transaction->transaction_types_id) selected @endif>
+                            {{ $type->transaction_types_name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -26,9 +28,17 @@
                 <select id="countries"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     name="khat_name">
-                    <option selected value="">Choose a khat (sector)</option>
-                    @foreach ($khat_types as $type)
-                        <option value="{{ $type->id }}">{{ $type->khat_name }}</option>
+                    {{-- <option selected value="">Choose a khat (sector)</option> --}}
+                    @foreach ($khat_types as $khat)
+                        {{-- @if ($khat->id == $transaction->khat_type_id)
+                            <option value="{{ $khat->id }}" selected>
+                                {{ $khat->khat_name }}
+                            </option>
+                        @else --}}
+                        <option value="{{ $khat->id }}" @if ($khat->id == $transaction->khat_type_id) selected @endif>
+                            {{ $khat->khat_name }}
+                        </option>
+                        {{-- @endif --}}
                     @endforeach
                 </select>
             </div>
@@ -36,7 +46,7 @@
                 <label for="number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
                 <input type="number" id="amount" name="amount"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    min="0">
+                    min="0" value="{{ $transaction->amount }}">
             </div>
 
             <button type="submit"

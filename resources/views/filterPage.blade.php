@@ -3,13 +3,13 @@
     <div class="m-4 ">
         <div class="flex justify-end">
             <a class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-                href="{{ route('reports.create') }}">Create Transcation</a>
+                href="{{ route('reports.index') }}">All Transcation</a>
         </div>
     </div>
     <div class="flex">
         <div>
             <div>
-                <h4>You Current ballance: ${{ $ballance }}</h4>
+                {{-- <h4>You Current ballance: ${{ $ballance }}</h4> --}}
             </div>
             <div class="my-4">
                 <h4>
@@ -19,6 +19,7 @@
             </div>
         </div>
     </div>
+
     <div>
         @include('filterBox')
     </div>
@@ -43,7 +44,6 @@
                     </th>
                     <th scope="col" class="px-6 py-3">
                         <span class="sr-only">Edit</span>
-                        <span class="sr-only">Delete</span>
                     </th>
                 </tr>
             </thead>
